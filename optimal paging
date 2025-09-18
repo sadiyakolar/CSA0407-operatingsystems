@@ -1,0 +1,57 @@
+
+
+public class OptimalPaging {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of frames: ");
+        int frames = sc.nextInt();
+
+        System.out.print("Enter number of pages: ");
+        int n = sc.nextInt();
+
+        int[] pages = new int[n];
+        System.out.println("Enter page reference string:");
+        for (int i = 0; i < n; i++) {
+            pages[i] = sc.nextInt();
+        }
+
+        Set<Integer> set = new HashSet<>();
+        int pageFaults = 0;
+
+        for (int i = 0; i < n; i++) {
+            int page = pages[i];
+
+            // if page not in memory
+            if (!set.contains(page)) {
+                if (set.size() == frames) {
+                    // find page to replace (farthest in future use)
+                    int farthest = i, pageToRemove = -1;
+                    for (int p : set) {
+                        int j;
+                        for (j = i + 1; j < n; j++) {
+                            if (pages[j] == p) break;
+                        }
+                        if (j == n) { // not used again
+                            pageToRemove = p;
+                            break;
+                        }
+                        if (j > farthest) {
+                            farthest = j;
+                            pageToRemove = p;
+                        }
+                    }
+                    set.remove(pageToRemove);
+                }
+                set.add(page);
+                pageFaults++;
+                System.out.println("Page " + page + " -> Page Fault");
+            } else {
+                System.out.println("Page " + page + " -> No Fault");
+            }
+        }
+
+        System.out.println("\nTotal Page Faults: " + pageFaults);
+        sc.close();
+    }
+}
