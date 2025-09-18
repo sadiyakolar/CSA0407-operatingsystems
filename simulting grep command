@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        printf("Usage: %s <pattern> <filename>\n", argv[0]);
+        return 1;
+    }
+
+    char *pattern = argv[1];
+    char *filename = argv[2];
+    char line[256];
+
+    FILE *fp = fopen(filename, "r");
+    if (fp == NULL) {
+        perror("fopen");
+        return 1;
+    }
+
+    printf("Lines matching '%s' in file %s:\n", pattern, filename);
+    while (fgets(line, sizeof(line), fp)) {
+        if (strstr(line, pattern) != NULL) { // check if pattern exists in line
+            printf("%s", line);
+        }
+    }
+
+    fclose(fp);
+    return 0;
+}
