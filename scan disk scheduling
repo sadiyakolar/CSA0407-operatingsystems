@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int i, j, n, head, size, direction, seek = 0;
+
+    printf("Enter number of requests: ");
+    scanf("%d", &n);
+
+    int req[n];
+    printf("Enter request sequence: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &req[i]);
+
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter total disk size (max cylinder number): ");
+    scanf("%d", &size);
+
+    printf("Enter head direction (1=high, 0=low): ");
+    scanf("%d", &direction);
+
+    // sort requests
+    for (i = 0; i < n-1; i++) {
+        for (j = i+1; j < n; j++) {
+            if (req[i] > req[j]) {
+                int temp = req[i];
+                req[i] = req[j];
+                req[j] = temp;
+            }
+        }
+    }
+
+    int index;
+    for (i = 0; i < n; i++) {
+        if (head < req[i]) {
+            index = i;
+            break;
+        }
+    }
+
+    printf("\nSeek Sequence: %d", head);
+
+    if (direction == 1) { // moving to high end
+        for (i = index; i < n; i++) {
+            seek += abs(req[i] - head);
+            head = req[i];
+            printf(" -> %d", head);
+        }
+        // go to end
+        seek += abs((size-1) - head);
+        head = size-1;
+        printf(" -> %d", head);
+        // reverse
+        for (i = index-1; i >= 0; i--) {
+            seek += abs(req[i] - head);
+            head = req[i];
+            printf(" -> %d", head);
+        }
+    } else { // moving to low end
+        for (i = index-1; i >= 0; i--) {
+            seek += abs(req[i] - head);
+            head = req[i];
+            printf(" -> %d", head);
+        }
+        // go to beginning
+        seek += abs(head - 0);
+        head = 0;
+        printf(" -> %d", head);
+        // reverse
+        for (i = index; i < n; i++) {
+            seek += abs(req[i] - head);
+            head = req[i];
+            printf(" -> %d", head);
+        }
+    }
+
+    printf("\nTotal Seek Time = %d\n", seek);
+    printf("Average Seek Time = %.2f\n", (float)seek/n);
+
+    return 0;
+}
