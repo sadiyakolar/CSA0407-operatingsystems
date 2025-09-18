@@ -1,0 +1,45 @@
+class Buffer {
+    int item;
+    boolean available = false;
+
+    public synchronized void produce(int value) throws InterruptedException {
+        while (available) wait();   // wait if item already present
+        item = value;
+        available = true;
+        System.out.println("Produced: " + value);
+        notify();  // notify consumer
+    }
+
+    public synchronized int consume() throws InterruptedException {
+        while (!available) wait();  // wait if buffer empty
+        available = false;
+        System.out.println("Consumed: " + item);
+        notify();  // notify producer
+        return item;
+    }
+}
+
+public class ProducerConsumerSimple {
+    public static void main(String[] args) {
+        Buffer buffer = new Buffer();
+
+        // Producer thread
+        Thread producer = new Thread(() -> {
+            for (int i = 1; i <= 5; i++) {
+                try { buffer.produce(i); Thread.sleep(500); }
+                catch (InterruptedException e) {}
+            }
+        });
+
+        // Consumer thread
+        Thread consumer = new Thread(() -> {
+            for (int i = 1; i <= 5; i++) {
+                try { buffer.consume(); Thread.sleep(1000); }
+                catch (InterruptedException e) {}
+            }
+        });
+
+        producer.start();
+        consumer.start();
+    }
+}
