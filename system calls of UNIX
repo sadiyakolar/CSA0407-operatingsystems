@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+int main() {
+    int fd;
+    char buffer[50];
+
+    // Create / Open file
+    fd = open("test.txt", O_CREAT | O_RDWR, 0644);
+    if (fd < 0) {
+        printf("Error opening file\n");
+        return 1;
+    }
+
+    // Write to file
+    write(fd, "Hello, UNIX System Calls!\n", 26);
+
+    // Move file pointer to beginning
+    lseek(fd, 0, SEEK_SET);
+
+    // Read from file
+    read(fd, buffer, 26);
+    buffer[26] = '\0';
+    printf("Data read from file: %s\n", buffer);
+
+    // Close file
+    close(fd);
+
+    return 0;
+}
