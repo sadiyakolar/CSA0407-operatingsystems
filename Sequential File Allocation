@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+int main() {
+    int files[50], startBlock, length, i, j, c, k, n;
+
+    for (i = 0; i < 50; i++)  // initialize disk blocks as free (0)
+        files[i] = 0;
+
+    while (1) {
+        printf("\nEnter starting block and length of file: ");
+        scanf("%d%d", &startBlock, &length);
+
+        if (startBlock + length > 50) {
+            printf("Error: File goes out of disk size (50 blocks max).\n");
+            continue;
+        }
+
+        c = 0;
+        for (j = startBlock; j < (startBlock + length); j++) {
+            if (files[j] == 0)
+                c++;
+        }
+
+        if (c == length) { // all blocks free
+            for (k = startBlock; k < (startBlock + length); k++)
+                files[k] = 1;
+
+            printf("File allocated from block %d to %d\n", startBlock, startBlock + length - 1);
+        } else {
+            printf("File cannot be allocated. Some blocks are already occupied.\n");
+        }
+
+        printf("\nBlock Status:\n");
+        for (i = 0; i < 50; i++) {
+            printf("%d ", files[i]);
+        }
+
+        printf("\nDo you want to enter more files? (1 = Yes / 0 = No): ");
+        scanf("%d", &n);
+
+        if (n == 0)
+            break;
+    }
+    return 0;
+}
