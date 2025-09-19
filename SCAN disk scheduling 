@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n, i, j, head, total = 0, disk_size, direction;
+
+    printf("Enter number of disk requests: ");
+    scanf("%d", &n);
+
+    int req[n];
+    printf("Enter disk request sequence: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &req[i]);
+
+    printf("Enter initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter total disk size (max track number): ");
+    scanf("%d", &disk_size);
+
+    printf("Enter head movement direction (1=high, 0=low): ");
+    scanf("%d", &direction);
+
+    // Sort requests
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (req[i] > req[j]) {
+                int temp = req[i];
+                req[i] = req[j];
+                req[j] = temp;
+            }
+        }
+    }
+
+    // Find head position in sorted array
+    int index;
+    for (i = 0; i < n; i++) {
+        if (head < req[i]) {
+            index = i;
+            break;
+        }
+    }
+
+    printf("\nSequence of Head Movement:\n");
+    printf("%d", head);
+
+    // Move towards higher tracks
+    if (direction == 1) {
+        for (i = index; i < n; i++) {
+            total += abs(req[i] - head);
+            head = req[i];
+            printf(" -> %d", head);
+        }
+
+        // Go to the end of the disk
+        total += abs((disk_size - 1) - head);
+        head = disk_size - 1;
+        printf(" -> %d", head);
+
+        // Now move backwards
+        for (i = index - 1; i >= 0; i--) {
+            total += abs(req[i] - head);
+            head = req[i];
+            printf(" -> %d", head);
+        }
+    }
+    // Move towards lower tracks
+    else {
+        for (i = index - 1; i >= 0; i--) {
+            total += abs(req[i] - head);
+            head = req[i];
+            printf(" -> %d", head);
+        }
+
+        // Go to the start of the disk
+        total += abs(head - 0);
+        head = 0;
+        printf(" -> %d", head);
+
+        // Now move forward
+        for (i = index; i < n; i++) {
+            total += abs(req[i] - head);
+            head = req[i];
+            printf(" -> %d", head);
+        }
+    }
+
+    printf("\n\nTotal Head Movement = %d\n", total);
+
+    return 0;
+}
